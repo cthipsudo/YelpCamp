@@ -23,8 +23,8 @@ const seedDB = async () => {
     for (let i = 0; i < 50; i++) {
         const rand1000 = Math.floor(Math.random() * 1000);
         const campground = await new Campground({
-            title: `${cities[rand1000].city}, ${cities[rand1000].state}`,
-            location: `${sample(descriptors)} ${sample(places)}`
+            location: `${cities[rand1000].city}, ${cities[rand1000].state}`,
+            title: `${sample(descriptors)} ${sample(places)}`
         });
         await campground.save();
     }
