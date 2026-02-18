@@ -33,8 +33,8 @@ app.get("/campgrounds", async (req, res) => {
 app.post("/campgrounds", async (req, res) => {
   // Parse req body
   // then create and save the new campground
-  const { title, location } = req.body.campground;
-  const campground = new Campground({ title, location });
+
+  const campground = new Campground(req.body.campground);
   //console.log(campground);
   await campground.save();
   res.redirect(`/campgrounds/${campground._id}`);
