@@ -5,8 +5,9 @@ const mongoose = require("mongoose");
 const engine = require("ejs-mate");
 const methodOverride = require("method-override");
 const Campground = require("./models/campground");
+const AppError = require("./utils/ExpressError");
 
-mongoose.connect("mongodb://localhost:27017/yelp-camp");
+mongoose.connect("mongodb://127.0.0.1:27017/yelp-camp");
 
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error:"));
@@ -68,6 +69,11 @@ app.get("/campgrounds/:id/edit", async (req, res) => {
   const { id } = req.params;
   const campground = await Campground.findById(id);
   res.render("campgrounds/edit", { campground });
+});
+
+app.use((err, req, res, next) => {
+  res.send("Oh Boy something went wrong!");
+  next();
 });
 
 app.listen(3000, () => {
