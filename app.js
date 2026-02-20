@@ -5,7 +5,7 @@ const mongoose = require("mongoose");
 const engine = require("ejs-mate");
 const methodOverride = require("method-override");
 const Campground = require("./models/campground");
-const AppError = require("./utils/ExpressError");
+const ExpressError = require("./utils/ExpressError");
 
 mongoose.connect("mongodb://127.0.0.1:27017/yelp-camp");
 
@@ -32,11 +32,9 @@ app.get("/campgrounds", async (req, res) => {
 });
 
 app.post("/campgrounds", async (req, res) => {
-  // Parse req body
-  // then create and save the new campground
-
+  if (!req.body.campground)
+    throw new ExpressError("Invalid Campground Data", 400);
   const campground = new Campground(req.body.campground);
-  //console.log(campground);
   await campground.save();
   res.redirect(`/campgrounds/${campground._id}`);
 });
@@ -71,9 +69,14 @@ app.get("/campgrounds/:id/edit", async (req, res) => {
   res.render("campgrounds/edit", { campground });
 });
 
+app.all(/(.*)/, (req, res, next) => {
+  next(new ExpressError("Page Not Found", 404));
+});
+
 app.use((err, req, res, next) => {
-  res.send("Oh Boy something went wrong!");
-  next();
+  const { statusCode = 500 } = err;
+  if (!err.message) err.message = "Oh No, Something Went Wrong!";
+  res.status(statusCode).render("error", { err });
 });
 
 app.listen(3000, () => {
