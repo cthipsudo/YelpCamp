@@ -5,8 +5,9 @@ const mongoose = require("mongoose");
 const engine = require("ejs-mate");
 const methodOverride = require("method-override");
 const Campground = require("./models/campground");
+const Review = require("./models/review")
 const ExpressError = require("./utils/ExpressError");
-const { campgroundSchema } = require("./schemas.js");
+const { campgroundSchema, reviewSchema } = require("./schemas.js");
 
 mongoose.connect("mongodb://127.0.0.1:27017/yelp-camp");
 
@@ -26,6 +27,16 @@ app.use(methodOverride("_method"));
 const validateCampground = (req, res, next) => {
   const { error } = campgroundSchema.validate(req.body || {});
   if (error) {
+    const msg = error.details.map((el) => el.message).join(",");
+    throw new ExpressError(msg, 400);
+  } else {
+    next();
+  }
+};
+
+const validateReview = (req, res, next ) => {
+  const { error } = reviewSchema.validate(req.body || {});
+  if(error) {
     const msg = error.details.map((el) => el.message).join(",");
     throw new ExpressError(msg, 400);
   } else {
@@ -54,7 +65,7 @@ app.get("/campgrounds/new", (req, res) => {
 
 app.get("/campgrounds/:id", async (req, res) => {
   const { id } = req.params;
-  const campground = await Campground.findById(id);
+  const campground = await Campground.findById(id).populate('reviews');
   res.render("campgrounds/show", { campground });
 });
 
@@ -76,6 +87,25 @@ app.get("/campgrounds/:id/edit", async (req, res) => {
   const { id } = req.params;
   const campground = await Campground.findById(id);
   res.render("campgrounds/edit", { campground });
+});
+
+app.post("/campgrounds/:id/reviews", validateReview, async (req, res) => {
+  const { id } = req.params;
+  const campground = await Campground.findById(id)
+  const review = new Review(req.body.review);
+  campground.reviews.push(review);
+  await review.save();
+  await campground.save();
+  res.redirect(`/campgrounds/${campground._id}`);
+});
+
+app.delete("/campgrounds/:id/reviews/:reviewId", async (req, res) => {
+  const {id, reviewId } = req.params;
+  Campground.findByIdAndUpdate(id, {$pull: {reviews: reviewId}}); // $Pull finds and delete the object 
+  await Review.findByIdAndDelete(reviewId);
+  res.redirect(`/campgrounds/${id}`)
+  //res.send('DELETE ME!');
+  
 });
 
 app.all(/(.*)/, (req, res, next) => {
