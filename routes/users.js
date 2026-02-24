@@ -2,19 +2,7 @@ const express = require('express');
 const Router = express.Router();
 const User = require("../models/user");
 const passport = require('passport');
-const ExpressError = require("../utils/ExpressError");
 
-const { campgroundSchema } = require("../schemas.js");
-
-const validateCampground = (req, res, next) => {
-  const { error } = campgroundSchema.validate(req.body || {});
-  if (error) {
-    const msg = error.details.map((el) => el.message).join(",");
-    throw new ExpressError(msg, 400);
-  } else {
-    next();
-  }
-};
 
 Router.get('/register', (req, res) => {
   res.render('users/form');
