@@ -1,0 +1,36 @@
+const express = require('express');
+const Router = express.Router();
+const User = require("../models/user");
+const ExpressError = require("../utils/ExpressError");
+
+const { campgroundSchema } = require("../schemas.js");
+
+const validateCampground = (req, res, next) => {
+  const { error } = campgroundSchema.validate(req.body || {});
+  if (error) {
+    const msg = error.details.map((el) => el.message).join(",");
+    throw new ExpressError(msg, 400);
+  } else {
+    next();
+  }
+};
+
+Router.get('/register', (req, res) => {
+  res.render('users/form');
+})
+
+Router.post('/register', async (req, res) => {
+  try {
+    const { username, password, email } = req.body.user;
+    const user = new User({ email, username });
+    const registeredUser = await User.register(user, password);
+    req.flash('success', 'Welcome to Yelp Camp!');
+  res.redirect('/campgrounds')
+  } catch(e) {
+    req.flash('error', e.message);
+    res.redirect('/register');
+
+  }
+})
+
+module.exports = Router;
