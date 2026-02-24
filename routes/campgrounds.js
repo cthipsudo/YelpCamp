@@ -23,6 +23,7 @@ Router.get("/", async (req, res) => {
 
 Router.post("/", isLoggedIn, validateCampground, async (req, res, next) => {
   const campground = new Campground(req.body.campground);
+  campground.author = req.user._id; // req.user is added by passport
   await campground.save();
   req.flash('success', 'Successfully made a new campground!');
   res.redirect(`/campgrounds/${campground._id}`);
@@ -34,7 +35,8 @@ Router.get("/new", isLoggedIn,(req, res) => {
 
 Router.get("/:id", async (req, res) => {
   const { id } = req.params;
-  const campground = await Campground.findById(id).populate('reviews');
+  const campground = await Campground.findById(id).populate('reviews').populate('author');
+  console.log(campground);
   if(!campground) {
     req.flash('error', 'The campground you are searching for, does not exist');
     return res.redirect('/campgrounds');
