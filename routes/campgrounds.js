@@ -34,6 +34,10 @@ Router.get("/new", (req, res) => {
 Router.get("/:id", async (req, res) => {
   const { id } = req.params;
   const campground = await Campground.findById(id).populate('reviews');
+  if(!campground) {
+    req.flash('error', 'The campground you are searching for, does not exist');
+    return res.redirect('/campgrounds');
+  }
   res.render("campgrounds/show", { campground });
 });
 
@@ -42,12 +46,18 @@ Router.put("/:id", validateCampground, async (req, res) => {
   const campground = await Campground.findByIdAndUpdate(id, {
     ...req.body.campground,
   });
+  if(!campground) {
+    req.flash('error', 'The campground you are trying to edit, does not exist');
+    return res.redirect('/campgrounds');
+  }
+  req.flash('success', "You've successfully updated the campground!")
   res.redirect(`/campgrounds/${campground._id}`);
 });
 
 Router.delete("/:id", async (req, res) => {
   const { id } = req.params;
   await Campground.findByIdAndDelete(id);
+  req.flash('success', "Successfully deleted campground.")
   res.redirect(`/campgrounds`);
 });
 
