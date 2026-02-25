@@ -4,9 +4,9 @@ const user = require("../controllers/user.js");
 const passport = require("passport");
 const { storeReturnTo } = require("../middleware.js");
 
-Router.get("/register", user.renderForm);
+Router.get("/register", user.renderRegister);
 
-Router.post("/register", user.createUser);
+Router.post("/register", user.register);
 
 Router.get("/login", user.renderLogin);
 

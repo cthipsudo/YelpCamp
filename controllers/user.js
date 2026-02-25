@@ -1,10 +1,10 @@
 const User = require("../models/user");
 
-module.exports.renderForm = (req, res) => {
+module.exports.renderRegister = (req, res) => {
   res.render("users/form");
 };
 
-module.exports.createUser = async (req, res, next) => {
+module.exports.register = async (req, res, next) => {
   try {
     const { username, password, email } = req.body.user;
     const user = new User({ email, username });
