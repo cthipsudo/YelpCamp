@@ -6,6 +6,7 @@ const {
   isLoggedIn,
   validateCampground,
   isAuthor,
+  saveSession,
 } = require("../middleware.js");
 
 Router.route("/")
@@ -15,7 +16,7 @@ Router.route("/")
 Router.get("/new", isLoggedIn, campgrounds.renderNewForm);
 
 Router.route("/:id")
-  .get(campgrounds.showCampground)
+  .get(saveSession, campgrounds.showCampground)
   .put(isLoggedIn, isAuthor, validateCampground, campgrounds.updateCampground)
   .delete(isLoggedIn, isAuthor, campgrounds.deleteCampground);
 

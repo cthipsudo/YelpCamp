@@ -27,7 +27,6 @@ module.exports.showCampground = async (req, res) => {
       },
     })
     .populate("author");
-  console.log(campground);
   if (!campground) {
     req.flash("error", "The campground you are searching for, does not exist");
     return res.redirect("/campgrounds");
