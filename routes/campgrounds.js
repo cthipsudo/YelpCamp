@@ -8,24 +8,16 @@ const {
   isAuthor,
 } = require("../middleware.js");
 
-Router.get("/", campgrounds.index);
-
-Router.post("/", isLoggedIn, validateCampground, campgrounds.createCampground);
+Router.route("/")
+  .get(campgrounds.index)
+  .post(isLoggedIn, validateCampground, campgrounds.createCampground);
 
 Router.get("/new", isLoggedIn, campgrounds.renderNewForm);
 
-Router.get("/:id", campgrounds.showCampground);
+Router.route("/:id")
+  .get(campgrounds.showCampground)
+  .put(isLoggedIn, isAuthor, validateCampground, campgrounds.updateCampground)
+  .delete(isLoggedIn, isAuthor, campgrounds.deleteCampground);
 
 Router.get("/:id/edit", isLoggedIn, isAuthor, campgrounds.renderEditForm);
-
-Router.put(
-  "/:id",
-  isLoggedIn,
-  isAuthor,
-  validateCampground,
-  campgrounds.updateCampground,
-);
-
-Router.delete("/:id", isLoggedIn, isAuthor, campgrounds.deleteCampground);
-
 module.exports = Router;

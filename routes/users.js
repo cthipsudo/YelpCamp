@@ -1,25 +1,23 @@
 const express = require("express");
-const Router = express.Router();
+const router = express.Router();
 const user = require("../controllers/user.js");
 const passport = require("passport");
 const { storeReturnTo } = require("../middleware.js");
 
-Router.get("/register", user.renderRegister);
+router.route("/register").get(user.renderRegister).post(user.register);
 
-Router.post("/register", user.register);
+router
+  .route("/login")
+  .get(user.renderLogin)
+  .post(
+    storeReturnTo,
+    passport.authenticate("local", {
+      failureFlash: true,
+      failureRedirect: "/login",
+    }),
+    user.login,
+  );
 
-Router.get("/login", user.renderLogin);
+router.get("/logout", user.logout);
 
-Router.post(
-  "/login",
-  storeReturnTo,
-  passport.authenticate("local", {
-    failureFlash: true,
-    failureRedirect: "/login",
-  }),
-  user.login,
-);
-
-Router.get("/logout", user.logout);
-
-module.exports = Router;
+module.exports = router;
