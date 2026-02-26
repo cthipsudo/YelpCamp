@@ -14,11 +14,12 @@ const {
 
 Router.route("/")
   .get(campgrounds.index)
-  // .post(isLoggedIn, validateCampground, campgrounds.createCampground)
-  .post(upload.array("image"), (req, res) => {
-    console.log(req.body, req.files);
-    res.send("It worked!");
-  });
+  .post(
+    isLoggedIn,
+    upload.array("image"),
+    validateCampground,
+    campgrounds.createCampground,
+  );
 
 Router.get("/new", isLoggedIn, campgrounds.renderNewForm);
 
