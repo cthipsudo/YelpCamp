@@ -71,7 +71,7 @@ map.on("load", () => {
     source: "campgrounds",
     filter: ["!", ["has", "point_count"]],
     paint: {
-      "circle-color": "#11b4da",
+      "circle-color": "#5F303F",
       "circle-radius": 4,
       "circle-stroke-width": 1,
       "circle-stroke-color": "#fff",
@@ -112,13 +112,14 @@ map.on("load", () => {
     type: "click",
     target: { layerId: "unclustered-point" },
     handler: (e) => {
+      const { popUpMarkup } = e.feature.properties;
       const coordinates = e.feature.geometry.coordinates.slice();
-      const mag = e.feature.properties.mag;
-      const tsunami = e.feature.properties.tsunami === 1 ? "yes" : "no";
+      // const mag = e.feature.properties.mag;
+      // const tsunami = e.feature.properties.tsunami === 1 ? "yes" : "no";
 
       new mapboxgl.Popup()
         .setLngLat(coordinates)
-        .setHTML(`magnitude: ${mag}<br>Was there a tsunami?: ${tsunami}`)
+        .setHTML(popUpMarkup)
         .addTo(map);
     },
   });
