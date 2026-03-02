@@ -6,7 +6,7 @@ const map = new mapboxgl.Map({
   config: {
     basemap: {
       theme: "monochrome",
-      lightPreset: "night",
+      lightPreset: "day",
     },
   },
   center: [-103.5917, 40.6699],
@@ -42,13 +42,13 @@ map.on("load", () => {
       "circle-color": [
         "step",
         ["get", "point_count"],
-        "#51bbd6",
-        100,
-        "#f1f075",
-        750,
-        "#f28cb1",
+        "#C893A4",
+        10,
+        "#A3526C",
+        30,
+        "#5F303F",
       ],
-      "circle-radius": ["step", ["get", "point_count"], 20, 100, 30, 750, 40],
+      "circle-radius": ["step", ["get", "point_count"], 15, 10, 20, 30, 25],
       "circle-emissive-strength": 1,
     },
   });
