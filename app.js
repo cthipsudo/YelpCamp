@@ -4,6 +4,7 @@ if (process.env.NODE_ENV !== "production") {
 
 const express = require("express");
 const app = express();
+
 const path = require("path");
 const mongoose = require("mongoose");
 const engine = require("ejs-mate");
@@ -14,6 +15,8 @@ const flash = require("connect-flash");
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
 const User = require("./models/user");
+
+const sanitizeV5 = require('./utils/mongoSanitizeV5.js');
 
 const campgroundRoutes = require("./routes/campgrounds");
 const reviewRoutes = require("./routes/reviews");
@@ -30,10 +33,14 @@ db.once("open", () => {
 app.engine("ejs", engine);
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
+app.set('query parser', 'extended');
+
 
 app.use(express.urlencoded({ extended: true })); // Body Parser
 app.use(methodOverride("_method"));
 app.use(express.static(path.join(__dirname, "public")));
+app.use(sanitizeV5({ replaceWith: '_' }));
+
 
 const sessionConfig = {
   secret: "thisisasecret",
@@ -56,6 +63,7 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
 app.use((req, res, next) => {
+  console.log(req.query)
   res.locals.currentUser = req.user;
   res.locals.success = req.flash("success");
   res.locals.error = req.flash("error");

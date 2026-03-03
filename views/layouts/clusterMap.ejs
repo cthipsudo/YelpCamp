@@ -15,11 +15,12 @@
 
 <body class="d-flex flex-column vh-100">
 
+  <%- include('../partials/flash') %>
   <%- include('../partials/navbar') %>
 
   <main class="mb-5">
     <div id="cluster-map"></div>
-    <%- include('../partials/flash') %>
+    
     <div class="container">
       <%- body -%>
     </div>
