@@ -43,8 +43,10 @@ app.use(sanitizeV5({ replaceWith: '_' }));
 
 
 const sessionConfig = {
+  name: 'pagoda',
   secret: "thisisasecret",
   resave: false,
+  // secure: true,
   saveUninitialized: true,
   cookie: {
     httpOnly: true,
