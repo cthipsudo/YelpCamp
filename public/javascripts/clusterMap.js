@@ -42,14 +42,17 @@ map.on("load", () => {
       "circle-color": [
         "step",
         ["get", "point_count"],
-        "#C893A4",
+        "#74FBB8",
         10,
-        "#A3526C",
+        "#07DA70",
         30,
-        "#5F303F",
+        "#069D52",
       ],
       "circle-radius": ["step", ["get", "point_count"], 15, 10, 20, 30, 25],
       "circle-emissive-strength": 1,
+      'circle-stroke-color': 'black',
+      'circle-stroke-width': 1,
+      
     },
   });
 
@@ -71,7 +74,7 @@ map.on("load", () => {
     source: "campgrounds",
     filter: ["!", ["has", "point_count"]],
     paint: {
-      "circle-color": "#5F303F",
+      "circle-color": "#40F99B",
       "circle-radius": 4,
       "circle-stroke-width": 1,
       "circle-stroke-color": "#fff",
