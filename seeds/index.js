@@ -1,3 +1,8 @@
+if (process.env.NODE_ENV !== "production") {
+  require("dotenv").config(); // need this for .env 
+}
+
+
 const cities = require("./cities");
 const { descriptors, places } = require("./seedHelpers");
 const mongoose = require("mongoose");
