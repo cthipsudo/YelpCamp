@@ -2,7 +2,8 @@ const cities = require("./cities");
 const { descriptors, places } = require("./seedHelpers");
 const mongoose = require("mongoose");
 const Campground = require("../models/campground");
-const db_url = process.env.DB_URL //"mongodb://127.0.0.1:27017/yelp-camp"
+
+const db_url = process.env.DB_URL 
 mongoose.connect(db_url);
 
 const db = mongoose.connection;
