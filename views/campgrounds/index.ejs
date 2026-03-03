@@ -5,14 +5,14 @@
 <main class="campgroundListContainer">
   <% for ( let campground of campgrounds ) { %>
   <div class="card mb-3">
-    <div class="row">
-      <div class="col-md-4">
-        <img src="<%= campground.images.length ? campground.images[0].url : 'https://res.cloudinary.com/dorflj0ap/image/upload/v1772386761/YelpCamp/c7pys7lslszlwhd8elz9.jpg' %>" class="img-fluid" alt="">
+    <div class="row g-0">
+      <div class="col-md-5 col-lg-4">
+        <img class="img-fluid rounded-start" src="<%= campground.images.length ? campground.images[0].url : 'https://res.cloudinary.com/dorflj0ap/image/upload/v1772386761/YelpCamp/c7pys7lslszlwhd8elz9.jpg' %>" class="img-fluid" alt="">
       </div>
-      <div class="col-md-8">
+      <div class="col-md-7 col-lg-8">
         <div class="card-body">
           <h5 class="card-title"><%= campground.title %></h5>
-          <p class="card-text"><%= campground.description%></p>
+          <p class="card-text"><%= campground.description.substring(0,80)%>...</p>
           <p class="card-text">
             <small class="text-secondary">
               <%= campground.location %>
@@ -24,6 +24,22 @@
     </div>
   </div>
   <% } %>
+
+  <!-- <div class="card mb-3" style="max-width: 540px;">
+  <div class="row g-0">
+    <div class="col-md-4">
+      <img src="..." class="img-fluid rounded-start" alt="...">
+    </div>
+    <div class="col-md-8">
+      <div class="card-body">
+        <h5 class="card-title">Card title</h5>
+        <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+        <p class="card-text"><small class="text-body-secondary">Last updated 3 mins ago</small></p>
+      </div>
+    </div>
+  </div>
+</div> -->
+
 </main>
 <div id="loader">Loading more items...</div>
 <script>
