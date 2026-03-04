@@ -6,8 +6,9 @@ const geocoder = mbxGeocoding({ accessToken: mapBoxToken });
 const { cloudinary } = require("../cloudinary");
 
 module.exports.index = async (req, res) => {
-  const campgrounds = await Campground.find();
-  res.render("campgrounds/index", { campgrounds });
+  const campgrounds = await Campground.find().limit(20);
+  const allCampgrounds = await Campground.find() // for the cluster map
+  res.render('campgrounds/index', { campgrounds, allCampgrounds });
 };
 
 module.exports.renderNewForm = (req, res) => {
@@ -88,4 +89,22 @@ module.exports.deleteCampground = async (req, res) => {
   await Campground.findByIdAndDelete(id);
   req.flash("success", "Successfully deleted campground.");
   res.redirect(`/campgrounds`);
+};
+
+module.exports.fetchCampground = async (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = 20;
+  const skip = (page - 1) * limit;
+
+  const campgrounds = await Campground.find()
+    .sort({ _id: 1 })   // consistent ordering prevents duplicates/skips
+    .skip(skip)
+    .limit(limit);
+  
+  const total = await Campground.countDocuments();
+
+  res.json({
+    campgrounds,
+    hasMore: skip + campgrounds.length < total
+  });
 };

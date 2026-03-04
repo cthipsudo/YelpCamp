@@ -1,22 +1,20 @@
 <% layout('layouts/clusterMap')%>
 
-<h1 class="my-5">All Campgrounds </h1>
+<h1 class="my-5">All Campgrounds</h1>
 
-<main class="campgroundListContainer">
-  <% for ( let campground of campgrounds ) { %>
+<main class="campgroundListContainer" id="campground-list">
+  <% for (let campground of campgrounds) { %>
   <div class="card mb-3">
     <div class="row g-0">
       <div class="col-md-5 col-lg-4">
-        <img class="img-fluid rounded-start" src="<%= campground.images.length ? campground.images[0].url : 'https://res.cloudinary.com/dorflj0ap/image/upload/v1772386761/YelpCamp/c7pys7lslszlwhd8elz9.jpg' %>" class="img-fluid" alt="">
+        <img class="img-fluid rounded-start" src="<%= campground.images.length ? campground.images[0].url : 'https://res.cloudinary.com/dorflj0ap/image/upload/v1772386761/YelpCamp/c7pys7lslszlwhd8elz9.jpg' %>" alt="<%= campground.title %>">
       </div>
       <div class="col-md-7 col-lg-8">
         <div class="card-body">
           <h5 class="card-title"><%= campground.title %></h5>
-          <p class="card-text"><%= campground.description.substring(0,80)%>...</p>
+          <p class="card-text"><%= campground.description.substring(0, 80) %>...</p>
           <p class="card-text">
-            <small class="text-secondary">
-              <%= campground.location %>
-            </small>
+            <small class="text-secondary"><%= campground.location %></small>
           </p>
           <a href="/campgrounds/<%= campground._id %>" class="btn btn-primary">View <%= campground.title %></a>
         </div>
@@ -24,13 +22,24 @@
     </div>
   </div>
   <% } %>
-
 </main>
+
+<!-- Sentinel: IntersectionObserver watches this to trigger next load -->
+<div id="scroll-sentinel" style="height: 1px;"></div>
+
+<!-- Bootstrap spinner shown while loading -->
+<div id="scroll-loader" class="text-center my-4" style="display:none;">
+  <div class="spinner-border text-secondary" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+</div>
+
 <script>
   const mapToken = "<%-process.env.MAPBOX_TOKEN %>";
+  // Use allCampgrounds for the map so all pins show, not just the first 20
   const campgrounds = {
-    features: <%-JSON.stringify(campgrounds)%>
+    features: <%-JSON.stringify(allCampgrounds)%>
   };
 </script>
 <script src="/javascripts/clusterMap.js"></script>
-<!-- <script src="/javascripts/infiniteScroll.js"></script> -->
+<script src="/javascripts/infiniteScroll.js"></script>

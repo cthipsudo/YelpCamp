@@ -23,6 +23,8 @@ Router.route("/")
 
 Router.get("/new", isLoggedIn, campgrounds.renderNewForm);
 
+Router.get("/list", campgrounds.fetchCampground)
+
 Router.route("/:id")
   .get(saveSession, campgrounds.showCampground)
   .put(
@@ -35,4 +37,5 @@ Router.route("/:id")
   .delete(isLoggedIn, isAuthor, campgrounds.deleteCampground);
 
 Router.get("/:id/edit", isLoggedIn, isAuthor, campgrounds.renderEditForm);
+
 module.exports = Router;

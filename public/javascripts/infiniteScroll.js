@@ -1,53 +1,67 @@
-const container = document.querySelector(".campgroundListContainer");
-const loader = document.getElementById("loader");
-const campgrounds = campgrounds; // Passed from EJS
-let page = 1;
+// =============================================
+// FILE: public/javascripts/infiniteScroll.js
+// =============================================
+
+let currentPage = 1;
 let isLoading = false;
+let hasMore = true;
 
-// Function to fetch data from an API
-async function fetchData(pageNumber) {
+const list = document.getElementById('campground-list');
+const sentinel = document.getElementById('scroll-sentinel');
+const loader = document.getElementById('scroll-loader');
+
+// Builds the card HTML to match your EJS template exactly
+function buildCard(c) {
+  const imgUrl = c.images && c.images.length
+    ? c.images[0].url
+    : 'https://res.cloudinary.com/dorflj0ap/image/upload/v1772386761/YelpCamp/c7pys7lslszlwhd8elz9.jpg';
+
+  return `
+    <div class="card mb-3">
+      <div class="row g-0">
+        <div class="col-md-5 col-lg-4">
+          <img class="img-fluid rounded-start" src="${imgUrl}" alt="${c.title}">
+        </div>
+        <div class="col-md-7 col-lg-8">
+          <div class="card-body">
+            <h5 class="card-title">${c.title}</h5>
+            <p class="card-text">${c.description.substring(0, 80)}...</p>
+            <p class="card-text">
+              <small class="text-secondary">${c.location}</small>
+            </p>
+            <a href="/campgrounds/${c._id}" class="btn btn-primary">View ${c.title}</a>
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+
+async function loadMore() {
+  if (isLoading || !hasMore) return;
   isLoading = true;
+  loader.style.display = 'block';
 
-  // await something...
+  try {
+    currentPage++;
+    const res = await fetch(`/campgrounds/list?page=${currentPage}`);
+    const data = await res.json();
+    console.log(data)
+    data.campgrounds.forEach(c => {
+      list.insertAdjacentHTML('beforeend', buildCard(c));
+    });
 
-  isLoading = false;
-  return data.items; // Assuming API returns an object with an items array
+    hasMore = data.hasMore;
+  } catch (err) {
+    console.error('Failed to load campgrounds:', err);
+  } finally {
+    isLoading = false;
+    loader.style.display = 'none';
+  }
 }
 
-// Function to add new items to the DOM
-function addItemsToDOM(items) {
-  items.forEach((item) => {
-    const itemDiv = document.createElement("div");
-    itemDiv.classList.add("item-card");
-    itemDiv.textContent = `Item ${item.id}`; // Adjust as per your data structure
-    container.appendChild(itemDiv);
-  });
-}
+// Trigger loadMore when sentinel div comes into view (300px before it's visible)
+const observer = new IntersectionObserver(entries => {
+  if (entries[0].isIntersecting) loadMore();
+}, { rootMargin: '300px' });
 
-// Set up Intersection Observer
-const observer = new IntersectionObserver(
-  (entries) => {
-    if (entries[0].isIntersecting && !isLoading) {
-      page++;
-      fetchData(page).then((items) => {
-        if (items.length > 0) {
-          addItemsToDOM(items);
-        } else {
-          // No more items, stop observing
-          observer.unobserve(loader);
-          loader.textContent = "No more items to load.";
-        }
-      });
-    }
-  },
-  {
-    root: null, // observe against the viewport
-    threshold: 0.1, // Trigger when 10% of the loader is visible
-  },
-);
-
-// Start observing the loader element
-observer.observe(loader);
-
-// Initial load
-fetchData(page).then(addItemsToDOM);
+observer.observe(sentinel);
